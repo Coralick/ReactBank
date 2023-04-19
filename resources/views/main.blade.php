@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -16,12 +15,17 @@
         </style>
     </head>
     <body>
-        <form action="{{ route('input.check')}}" method="post">
-            @csrf
-            <input type="email" placeholder="Email" name="email">
-            <input type="password" placeholder="Password" name="password">
-            <button type="submit">Вход</button>
-        </form>
-        <a href="/regist">Вы не зарегестрированны?</a>
+        
+        <h1>Здравствуйте, {{$name}}</h1>
+        <b><h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit reiciendis incidunt commodi voluptatum provident, repudiandae, illum consequatur sed corporis, facilis minus rem quo. Pariatur debitis ab autem, accusamus quibusdam nulla? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis magni ipsum ea cumque sed expedita cum id, exercitationem consectetur doloremque ratione dolores atque beatae sunt optio totam dicta corrupti minus.
+        Dignissimos hic, nostrum officia sit consequatur dolores doloremque dolor fuga mollitia eligendi modi accusantium cumque nemo labore id dolorum temporibus ab a distinctio quidem reprehenderit. Adipisci modi alias neque possimus.
+        Vel, dolorem aliquam magnam numquam commodi repellendus? Earum repudiandae laboriosam doloremque. Consequatur neque, quas eligendi velit nostrum repudiandae pariatur quam modi facilis quibusdam. Nihil aliquid, quam pariatur vitae inventore at?
+        Voluptatibus omnis ad molestiae, nesciunt libero molestias amet perspiciatis corporis debitis error obcaecati cumque eius accusamus inventore sunt quo rem aliquam aspernatur deserunt corrupti. Excepturi nemo optio fugit ipsam animi.
+        Asperiores dolorem illo distinctio sunt non, ex commodi quae delectus eum nesciunt, eius et expedita voluptate porro facere ratione nulla voluptas maxime repellat saepe ducimus praesentium architecto magni! Temporibus, quia.
+        Neque at ipsa necessitatibus tempora consequatur asperiores in est itaque optio ullam esse nemo minus dolorum iure quidem, rem aliquam, praesentium eveniet quo eaque quibusdam harum fugit. Officiis, magnam tenetur!
+        Tenetur, magnam quas? Ipsum omnis id minima ad amet! Nesciunt architecto facilis sapiente magnam dolores, vitae aperiam quos modi, in perferendis placeat voluptatibus saepe harum quisquam, maxime velit rerum tempora.
+        Illum cum voluptatum perferendis sequi necessitatibus, amet suscipit accusamus, tenetur, accusantium quae animi obcaecati omnis corporis nemo autem dolorem? Asperiores accusamus a adipisci itaque. Eveniet a voluptates odit ut sequi.
+        Harum perspiciatis cumque cupiditate vitae nihil! Molestias possimus veritatis unde? Accusantium quod optio iusto voluptas libero ab autem magnam quaerat illum. Est dolorum dolore exercitationem esse consequatur sequi magni amet.
+        Exercitationem itaque totam perferendis deleniti iste, quo nihil nam repellat. Porro perferendis esse rem pariatur quidem consequuntur earum impedit error a quae corrupti, deleniti, veritatis ex accusantium harum! Voluptatum, iure.</h1></b>
     </body>
 </html>

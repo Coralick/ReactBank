@@ -10,10 +10,27 @@ class UserController extends Controller
     public function getAllUsers(){
         return users::all();
     } 
-    public function index(){
-        // print start page
+    public function showMain($data)
+   
+    // print start page 
+    {   
+        return view('main', users::find($data));
+    }
+
+
+    public function checkUser(){
+        $data = request()->validate([
+            'email' => 'string',
+            'password' => 'string'
+        ]);
+
         foreach($this->getAllUsers() as $user){
-            dump($user->name);
+            if($user->email == $data['email'] and $user->password === $data['password']) {
+                return redirect()->route('mainList.show', $user->id);
+            }
+            else{
+                echo 'Неправильный логин или пароль!!';
+            }
         }
     }
 }

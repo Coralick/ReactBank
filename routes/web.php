@@ -14,4 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [UserController::class, 'index'])->name('users.index');
+Route::get('/', function(){
+    return view('welcome');
+})->name('users.index');
+Route::post('/input', [UserController::class, 'checkUser'])->name('input.check');
+Route::get('/main/{id}', [UserController::class, 'showMain'])->name('mainList.show');
