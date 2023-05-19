@@ -15,10 +15,11 @@ class users extends Model
      */
     protected $fillable = [
         'name',
+        'lastname',
         'email',
+        'phoneNumber',
         'password',
-        'tel,
-        lastname,'
+
     ];
 
     /**
