@@ -52,7 +52,7 @@ class UserController extends Controller
     }
 
 
-
+    // register user
     public function registUser(Request $request){
         $isExise = true;
         $data = request()->validate([
@@ -63,6 +63,7 @@ class UserController extends Controller
             'password' => 'string',
             'passwordRepeat' => 'string',            
         ]);
+
         $request->session()->forget('message');
         if($data['password'] === $data['passwordRepeat']){
             $data['password'] = md5($data['password']);
@@ -72,6 +73,7 @@ class UserController extends Controller
                     $request->session()->forget('message');
                 }     
             }
+
             if($isExise){
                 $data['remember_token'] = $user->remember_token;
                 if($request->session()->get('_token') === $user->remember_token){
@@ -79,7 +81,7 @@ class UserController extends Controller
                 }
                 users::create($data);
                 return redirect()->route('users.index');
-                // $user->remember_token = $request->session()->get('_token');
+
             }
             else{
                 $request->session()->put('message', 'Этот логин не подходит');
@@ -88,15 +90,9 @@ class UserController extends Controller
         }
     }
     public function test(Request $request){
-        // $request->session()->put('message', '');
-        // $value = $request->session()->get('message');
-        // request()->session()->put('message', 'onbsdfbopisdfbfsdbifdbbifdub325938284h9g07g34879g89b93');
+        
         $value = $request->session()->get('_token');
         print_r($value . '<br>');        
         print_r('8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');
-        // echo '<br>';
-        // $user = $this->getAllUsers()[0]->remember_token;
-        // print_r('G1JBTe7p9OdI6lXhID1uP7DnvZKxOTI3ljPxnPTM');
-
     }
 }
