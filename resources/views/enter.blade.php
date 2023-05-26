@@ -26,6 +26,12 @@
                 justify-content: center;
                 flex-direction: column;
             }
+            .formStyle>input{
+                border: 1px solid grey;
+                border-radius: 6px;
+                height: 40px;
+                margin: 5px 0;
+            }
         </style>
     </head>
     <body>
