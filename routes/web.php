@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,9 @@ Route::post('/input', [UserController::class, 'checkUser'])->name('input.check')
 Route::get('/regist', function(){return view('regist');})->name('regist.index');
 Route::post('/regist', [UserController::class, 'registUser'])->name('regist.check');
 
-Route::get('/main/{id}', [UserController::class, 'showMain'])->name('mainList.show');
+Route::get('/main', [UserController::class, 'showMain'])->name('mainList.show');
+
+Route::get('/transfer', function(){return view('transfer-money');})->name('transfer.index');
+Route::post('/transfer', [AccountController::class, 'transferMoney'])->name('transfer.check');
 
 Route::get('/test', [UserController::class, 'test']);
