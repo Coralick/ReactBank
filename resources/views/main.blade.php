@@ -48,7 +48,7 @@
                 <h2>Счет</h2>
                 <div>
                     <div class="bank-account">
-                            <p>{{$account['cash']}}</p>
+                        <p>{{$account['cash']}}</p>
                     </div>
                     <button type="button" class="btn btn-primary" onclick="window.location.href='/add-account'">+</button>    
                 </div>

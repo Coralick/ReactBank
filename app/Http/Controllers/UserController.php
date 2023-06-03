@@ -9,15 +9,16 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+
     public function getAllUsers(){
         return users::all();
     } 
 
+    // Show main list and get data for it
     public function showMain(Request $request)
-    {   
-        
+    { 
         $token = $request->session()->get('_token');
-        $user = '';
+
         foreach(users::where('remember_token', '=', $token)->get() as $users){
             $user = $users;
         }
@@ -27,12 +28,14 @@ class UserController extends Controller
             foreach($accounts as $account){
                 $accounts = $account;
         }
-        return view('main', ['user' => $user, 'account' => $accounts]);
+        if($user){
+            return view('main', ['user' => $user, 'account' => $accounts]);
+        }
+        else {
+            echo "Выйди от сюда, разбийник!!";
+        }
     }
 
-    // public function showView($path){
-    //     return view($path);
-    // }
 
 
     public function checkUser(Request $request){
@@ -40,6 +43,8 @@ class UserController extends Controller
             'email' => 'string',
             'password' => 'string',
         ]);
+
+        // check for enter in system
         $request->session()->forget('message');
         foreach($this->getAllUsers() as $user){
             if($user->email == $data['email'] and $user->password === md5($data['password'])) {
@@ -47,6 +52,7 @@ class UserController extends Controller
                 return redirect()->route('mainList.show');
             }   
         }
+
         $request->session()->put('message', 'Неверный логин или пароль');
         return redirect()->route('users.index');
     }
@@ -65,6 +71,8 @@ class UserController extends Controller
         ]);
 
         $request->session()->forget('message');
+
+        // check right data
         if($data['password'] === $data['passwordRepeat']){
             $data['password'] = md5($data['password']);
             foreach($this->getAllUsers() as $user){
@@ -74,11 +82,11 @@ class UserController extends Controller
                 }     
             }
 
+            // register users
             if($isExise){
-                $data['remember_token'] = $user->remember_token;
-                if($request->session()->get('_token') === $user->remember_token){
-                    $data['remember_token'] = hash('sha256', Str::random(80));
-                }
+
+                $data['remember_token'] = hash('sha256', Str::random(80));
+
                 users::create($data);
                 return redirect()->route('users.index');
 
@@ -89,8 +97,11 @@ class UserController extends Controller
             }
         }
     }
+
+
+    // test function 
     public function test(Request $request){
-        
+        session('_token', hash('sha256', Str::random(80)));
         $value = $request->session()->get('_token');
         print_r($value . '<br>');        
         print_r('8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');

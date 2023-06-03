@@ -7,10 +7,11 @@ use App\Models\users;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
-{
+{   
     public function getAllUsers(){
         return users::all();
     } 
+
     public function getAllAccount(){
         return account::all();
     } 
@@ -20,25 +21,33 @@ class AccountController extends Controller
             'transferNumber' => 'string',
             'amountMoney' => 'string',
         ]);
-        $url = $request->session()->get('_previous')['url'];
+        
+        // get current user
         $absenders = users::where('remember_token', '=', $request->session()->get('_token'))->get();
+        // logic transfer money 
         foreach($absenders as $absender){
-            foreach($this->getAllUsers() as $user){
-                if($user->phoneNumber === $data['transferNumber']){
-                    // account change cash
-                    foreach($this->getAllAccount() as $account){
-                        if($account->user_id == $user->id){
-                            $account->cash += $data['amountMoney'];
-                            $account->save();
-                        }
-
-                        if($absender->id == $account->user_id){
-                            $account->cash -= $data['amountMoney'];
-                            $account->save();
+            if($absender->phoneNumber != $data['transferNumber'])
+                foreach($this->getAllUsers() as $user){
+                    if($user->phoneNumber === $data['transferNumber']){
+                    
+                        // account change cash
+                        foreach($this->getAllAccount() as $account){
+                            // add money
+                            if($account->user_id == $user->id){
+                                $account->cash += $data['amountMoney'];
+                                $account->save();
+                            }
+                            // select money
+                            if($absender->id == $account->user_id){
+                                $account->cash -= $data['amountMoney'];
+                                $account->save();
+                            }
                         }
                     }
+                    
                 }
-                
+            else{
+                return view('transfer-money', ['message' => 'Это ваш Номер !!!']);
             }
         }
         return redirect('/main');
