@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class loan extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'sum',
+        'period',
+    ];
 }

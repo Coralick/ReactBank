@@ -18,56 +18,86 @@
             }
             .interface{
                 display: flex;
+                width: 100%;
                 justify-content: space-around;
-                place-items: center center;
             }
-            .account-panel{
-                margin: 15% 0;
-                width: 40%;
-                height: 20%;
+            .accounts, .loans{
+                width: 100%;
+
+            }
+            .accounts-list, .loan-list{
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                place-content: center center;
+                align-items: center;
+
+            }
+            .account-panel, .loan-panel{
+                margin: 20px 0;
+                display: flex;
+                justify-content: space-evenly;
+                width: 50%;
+                height: 25%;
                 border-radius: 20px;
                 padding: 40px;
                 color: white;
             }
-            .account-panel>div{
+            .account-panel>div, .loan-panel>div{
                 font-size: 2em;
                 display: flex;
                 justify-content: space-between;
             }
-            .account-panel>div>button{
-                font-size: 28px;
+            .account-panel>button, .loan-panel>button{
+                font-size: 15px;
+            }   
+            .title{
+                display: flex;
+                justify-content: space-around
             }
-
         </style>
     </head>
     <body>
-    
         <h1>Здравствуйте, {{$user['name']}}</h1>
         <div class="interface">
-            <div class="account-panel bg-primary ">
-                <h2>Счет</h2>
-                <div>
-                    <div class="bank-account">
-                        <p>{{$account['cash']}}</p>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='/add-account'">+</button>    
+
+            {{-- accounts interface --}}
+            <div class="accounts">
+                <div class="title">
+                    <h2>Счета</h2>  
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/add-account'">+</button>
                 </div>
-                <div>
-                    <button class="btn btn-success" type="button" onclick="window.location.href='/transfer'">Перевод средств</button>
+                <div class="accounts-list">
+                    @if (isset($accountList))
+                    @foreach ($accountList as $account)
+                        <div class="account-panel bg-primary "> 
+                            <h1>{{$account['cash']}}руб</h1>
+                            <button class="btn btn-success " type="button" onclick="window.location.href='/transfer'">Перевод средств</button>
+                        </div>
+                    @endforeach
+                    @else
+                        <h2>У вас нет счетов</h2>
+                    @endif
                 </div>
             </div>
 
-
-            <div class="account-panel bg-primary ">
-                <h2>Задолжность</h2>
-                <div>
-                    <div class="bank-account" >
-                        {{-- <p>{{$loan['sum']}}</p> --}}
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>    
+            {{-- loans interface --}}
+            <div class="loans">
+                <div class="title">
+                    <h2>Займы</h2>  
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>
                 </div>
-                <div>
-                    <button class="btn btn-success" type="button" onclick="window.location.href='/debt-repayment'">Погасить задолжность</button>
+                <div class="loan-list">
+                    @if (isset($loanList))
+                    @foreach ($loanList as $loan)
+                        <div class="loan-panel bg-primary "> 
+                            <h1>{{$loan['sum']}}руб</h1>
+                            <button class="btn btn-success " type="button" onclick="window.location.href='/close-loan'">Погасить задолжность</button>
+                        </div>
+                    @endforeach
+                    @else
+                        <h2>У вас нет займов</h2>
+                    @endif
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\account;
+use App\Models\loan;
 use App\Models\users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,14 +23,11 @@ class UserController extends Controller
         foreach(users::where('remember_token', '=', $token)->get() as $users){
             $user = $users;
         }
-
+        if(isset($user)){
         // get Accounts 
-            $accounts = account::where('user_id', $user->id)->get();
-            foreach($accounts as $account){
-                $accounts = $account;
-        }
-        if($user){
-            return view('main', ['user' => $user, 'account' => $accounts]);
+            $accounts = account::where('user_id', $user->id)->get();   
+            $loan = loan::where('user_id', $user->id)->get();   
+            return view('main', ['user' => $user, 'accountList' => $accounts, 'loanList' => $loan]);
         }
         else {
             echo "Выйди от сюда, разбийник!!";
