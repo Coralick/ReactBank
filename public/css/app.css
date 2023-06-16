@@ -1,0 +1,64 @@
+/* styles for forms */
+.block{
+    width: 100vw;
+}
+
+.formStyle{
+    text-align: center;
+    margin: 15% auto;
+    width: 500px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.formStyle>input{
+    border: 1px solid grey;
+    border-radius: 6px;
+    height: 40px;
+    margin: 5px 0;
+}
+
+h1{
+    text-align:center; 
+}
+
+/* main styles */
+.interface{
+    display: flex;
+    width: 100%;
+}
+
+.section{
+    width: 50vw;
+    margin: 10px;
+}
+
+.background-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    place-content: center center;
+    align-items: center;
+}
+
+.panel{
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 50%;
+    height: 50%;
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+}
+.panel>h1, .panel>h2{
+    margin: 0;
+}
+
+.title{
+    display: flex;
+    justify-content: space-around;
+}
