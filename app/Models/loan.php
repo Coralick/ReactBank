@@ -11,5 +11,6 @@ class loan extends Model
     protected $fillable = [
         'sum',
         'period',
+        'user_id',
     ];
 }

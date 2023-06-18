@@ -33,18 +33,18 @@ Route::get('/transfer', function(){return view('transfer-money');})->name('trans
 Route::post('/transfer', [AccountController::class, 'transferMoney'])->name('transfer.check');
 
 
-// get loan
+// cretae loan
 Route::get('/add-loan', function(){return view('add-loan');})->name('add-loan.index');
 Route::post('/add-loan', [LoanController::class, 'createLoan'])->name('add-loan.check');
-// close loan
 
-Route::get('/close-loan/{id}', function(){ return view('close-loan');})->name('close-loan.index');
+// close loan
+Route::get('/close-loan',[UserController::class, 'transfer'])->name('close-loan.index');
 Route::post('/close-loan', [LoanController::class, 'closeLoan'])->name('close-loan.check');
 
 
 // page for testing
 Route::get('/test', [UserController::class, 'test']);
-
+Route::get('/tes', function(){return view('add-account');});
 
 
 

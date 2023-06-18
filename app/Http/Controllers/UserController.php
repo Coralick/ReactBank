@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\LoanController;
 use App\Models\account;
 use App\Models\loan;
 use App\Models\users;
@@ -15,6 +15,12 @@ class UserController extends Controller
         return users::all();
     } 
 
+    public function getAllUsersJSON(){
+        $users = users::all();
+        return response()->json($users);
+    }
+
+
     // Show main list and get data for it
     public function showMain(Request $request)
     { 
@@ -24,18 +30,41 @@ class UserController extends Controller
             $user = $users;
         }
         if(isset($user)){
-        // get Accounts 
-            $accounts = account::where('user_id', $user->id)->get();   
-            $loan = loan::where('user_id', $user->id)->get();   
-            return view('main', ['user' => $user, 'accountList' => $accounts, 'loanList' => $loan]);
+        // get Account
+        if(count(account::where('user_id', $user->id)->get()) != 0){
+            foreach(account::where('user_id', $user->id)->get() as $data){
+                    $account = $data;
+                }
+            }
+        else{
+            $account = null;
+        }
+        // get Loans 
+            $loans = loan::where('user_id', $user->id)->get(); 
+            if(count($loans) == 0){
+                $loans = null;
+            } 
+
+            return view('main', ['user' => $user, 'account' => $account, 'loanList' => $loans]);
         }
         else {
-            echo "Выйди от сюда, разбийник!!";
+            return view('error');
         }
     }
 
 
+    public function transfer(Request $request){
+        $token = $request->session()->get('_token');
+        foreach(users::where('remember_token', '=', $token)->get() as $users){
+            $user = $users;
+        }
 
+        $loans = loan::where('user_id', $user->id)->get();
+        return view('close-loan', ['loansList' => $loans]);
+    }   
+
+
+    // Entrance user 
     public function checkUser(Request $request){
         $data = request()->validate([
             'email' => 'string',
@@ -90,7 +119,6 @@ class UserController extends Controller
 
             }
             else{
-                $request->session()->put('message', 'Этот логин не подходит');
                 return redirect()->route('regist.index'); 
             }
         }
@@ -99,7 +127,7 @@ class UserController extends Controller
 
     // test function 
     public function test(Request $request){
-        session('_token', hash('sha256', Str::random(80)));
+        session('_token', '8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');
         $value = $request->session()->get('_token');
         print_r($value . '<br>');        
         print_r('8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');

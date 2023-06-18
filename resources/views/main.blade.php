@@ -21,10 +21,13 @@
 
                 <div class="title">
                     <h2>Займы</h2>  
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>
-                    @if($loanList){
+                    @if(count($loanList)<= 2)
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>
+                    
+                    @endif
+
+                    @if($loanList)
                         <button type="button" class="btn btn-success"  onclick="window.location.href='/close-loan'">Погасить задолжность</button>
-                    }
                     @endif
                 </div>
                 <hr>

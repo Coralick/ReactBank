@@ -8,9 +8,10 @@
         <h1>Перевод</h1>
     @csrf
     <input type="text" placeholder="денежная сумма" name="amountMoney">
-    <select>
+    <select name="id">
+        <option disabled selected>Выберите займ</option>
         @foreach ($loansList as $loan)
-            <option value={{$loan['id']}}>{{$loan['price']}}</option>
+            <option value={{$loan['id']}}> {{$loan['id']}} - {{$loan->sum}}</option>
         @endforeach
     </select>
     @if (isset($message))
