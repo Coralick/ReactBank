@@ -53,12 +53,22 @@ class LoanController extends Controller
         }
         
         if(isset($id)){
-            foreach(account::where('user_id', '=', $id) as $account){
-                $account->cash -= $data['amountMoney'];
-                $account->save();
-            }    
-            foreach(loan::where('id', '=', $data['id']) as $loan){
-                $loan->sum -= $data['amountMoney'];
+            foreach($this->getAllAccounts() as $account){
+                if($account->user_id == $id){
+                    $account->cash -= $data['amountMoney'];
+                    $account->save();
+                }
+            }
+            foreach($this->getAllLoans() as $loan){
+                if($loan->id == $data['id']){
+                    $loan->sum -= $data['amountMoney'];
+                    if($loan->sum > 0){
+                    $loan->save();
+                    }
+                    else{
+                        $loan->delete();
+                    }
+                }
             }
             return redirect('/main');
         }

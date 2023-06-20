@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class account extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id',
+        'cash',
+        'user_id',
+    ];
 }
