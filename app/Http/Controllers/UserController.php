@@ -5,6 +5,7 @@ use App\Http\Controllers\LoanController;
 use App\Models\account;
 use App\Models\loan;
 use App\Models\users;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -19,11 +20,13 @@ class UserController extends Controller
     // Show main list and get data for it
     public function showMain(Request $request)
     { 
+        $request->session()->forget('message');
         $token = $request->session()->get('_token');
 
         foreach(users::where('remember_token', '=', $token)->get() as $users){
             $user = $users;
         }
+
         if(isset($user)){
             // get Account
             if(count(account::where('user_id', $user->id)->get()) != 0){
@@ -39,7 +42,6 @@ class UserController extends Controller
                 if(count($loans) == 0){
                     $loans = null;
                 } 
-
                 return view('main', ['user' => $user, 'account' => $account, 'loanList' => $loans]);
             }
         else {
@@ -47,16 +49,27 @@ class UserController extends Controller
         }
     }
 
+    
     // Transition on close-loan page
     public function transfer(Request $request){
+        // get users
         $token = $request->session()->get('_token');
         foreach(users::where('remember_token', '=', $token)->get() as $users){
             $user = $users;
         }
-
+        // get account
+        if(count(account::where('user_id', $user->id)->get()) != 0){
+            foreach(account::where('user_id', $user->id)->get() as $data){
+                    $account = $data;
+                }
+            }
+        else{
+            $account = null;
+        }
+        // get loans
         $loans = loan::where('user_id', $user->id)->get();
 
-        return view('close-loan', ['loansList' => $loans]);
+        return view('close-loan', ['loansList' => $loans, 'account' => $account]);
     }   
 
 
@@ -121,6 +134,7 @@ class UserController extends Controller
                     'cash' => 0,
                     'user_id' => $id,
                 ];
+
                 account::create($dataAccount);
 
                 return redirect()->route('users.index');

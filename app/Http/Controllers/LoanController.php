@@ -53,6 +53,7 @@ class LoanController extends Controller
             $id = $user->id;
         }
         
+        $request->session()->forget('message');
         if(isset($id)){
 
             foreach($this->getAllAccounts() as $account){
@@ -65,6 +66,7 @@ class LoanController extends Controller
                         $account->save();
                     }
                     else{
+                        $request->session()->put('message', 'У вас не достаточно средств');
                         return redirect('/close-loan');
                     }
                     // loans logic
@@ -84,11 +86,11 @@ class LoanController extends Controller
                     }   
                 }
             }
-
+            $request->session()->forget('message');
             return redirect('/main');
         }
         else{
-            return view('error', ['message' => 'ты как сюда попал ?']);
+            return view('error', ['message' => 'Ты как сюда попал ?']);
         }
     }
 }

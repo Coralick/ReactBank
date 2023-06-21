@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('loans', function(Blueprint $table){
             $table -> id('id');
             $table -> integer('period')->nullable();
-            $table -> float('percent')->nullable();
             $table -> integer('sum')->nullable();
             $table -> unsignedBigInteger('user_id');
             $table -> index('user_id', 'user_loans_idx');
