@@ -64,14 +64,19 @@ class LoanController extends Controller
                         $account->cash -= $data['amountMoney'];
                         $account->save();
                     }
-
+                    else{
+                        return redirect('/close-loan');
+                    }
                     // loans logic
                     foreach($this->getAllLoans() as $loan){
                         if($loan->id == $data['id']){
                             $loan->sum -= $data['amountMoney'];
+
+                            // check repayment loan
                             if($loan->sum > 0){
-                            $loan->save();
+                                $loan->save();
                             }
+
                             else{
                                 $loan->delete();
                             }
@@ -81,6 +86,9 @@ class LoanController extends Controller
             }
 
             return redirect('/main');
+        }
+        else{
+            return view('error', ['message' => 'ты как сюда попал ?']);
         }
     }
 }

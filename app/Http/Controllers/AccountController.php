@@ -27,27 +27,28 @@ class AccountController extends Controller
         // logic transfer money 
         foreach($absenders as $absender){
             if($absender->phoneNumber != $data['transferNumber'])
-                foreach($this->getAllUsers() as $user){
-                    if($user->phoneNumber === $data['transferNumber']){
-                    
-                        // account change cash
-                        foreach($this->getAllAccount() as $account){
-                            // add money
-                            if($account->user_id == $user->id){
-                                $account->cash += $data['amountMoney'];
-                                $account->save();
-                            }
-                            // select money
-                            if($absender->id == $account->user_id){
-                                $account->cash -= $data['amountMoney'];
-                                $account->save();
-                            }
+            
+                // account change cash
+                foreach(users::where('phoneNumber', '=', $data['transferNumber'])->get() as $user){
+                    // add money
+                    foreach(account::where('user_id', '=', $user->id)->get() as $account){
+                        if($account->cash >= $data['amountMoney']){
+                            $account->cash += $data['amountMoney'];
+                            $account->save();
+                        }
+                        else{
+                            return view('transfer-money', ['message' => 'У вас недостаточно средств']);
                         }
                     }
-                    
+
+                    // select money
+                    foreach(account::where('user_id', '=', $absender->id)->get() as $account){
+                        $account->cash -= $data['amountMoney'];
+                        $account->save();
+                    }
                 }
             else{
-                return view('transfer-money', ['message' => 'Это ваш Номер !!!']);
+                return view('transfer-money', ['message' => 'Это ваш Номер']);
             }
         }
         return redirect('/main');

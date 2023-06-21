@@ -15,11 +15,6 @@ class UserController extends Controller
         return users::all();
     } 
 
-    public function getAllUsersJSON(){
-        $users = users::all();
-        return response()->json($users);
-    }
-
 
     // Show main list and get data for it
     public function showMain(Request $request)
@@ -30,25 +25,25 @@ class UserController extends Controller
             $user = $users;
         }
         if(isset($user)){
-        // get Account
-        if(count(account::where('user_id', $user->id)->get()) != 0){
-            foreach(account::where('user_id', $user->id)->get() as $data){
-                    $account = $data;
+            // get Account
+            if(count(account::where('user_id', $user->id)->get()) != 0){
+                foreach(account::where('user_id', $user->id)->get() as $data){
+                        $account = $data;
+                    }
                 }
+            else{
+                $account = null;
             }
-        else{
-            $account = null;
-        }
-        // get Loans 
-            $loans = loan::where('user_id', $user->id)->get(); 
-            if(count($loans) == 0){
-                $loans = null;
-            } 
+            // get Loans 
+                $loans = loan::where('user_id', $user->id)->get(); 
+                if(count($loans) == 0){
+                    $loans = null;
+                } 
 
-            return view('main', ['user' => $user, 'account' => $account, 'loanList' => $loans]);
-        }
+                return view('main', ['user' => $user, 'account' => $account, 'loanList' => $loans]);
+            }
         else {
-            return view('error');
+            return view('error', ['message' => 'Эта страница вам недоступна сударь! Выйдите от сюда, пожалуйста!']);
         }
     }
 
@@ -60,6 +55,7 @@ class UserController extends Controller
         }
 
         $loans = loan::where('user_id', $user->id)->get();
+
         return view('close-loan', ['loansList' => $loans]);
     }   
 

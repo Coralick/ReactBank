@@ -2,7 +2,9 @@
 <html lang="en">
     <x-Header/>
 <body>
-    <h1>Такой страницы не существует!</h1>
+    @if (isset($message))
+        <h1 class="text-danger">{{$message}}</h1>
+    @endif
     <button class="btn btn-primary" onclick="window.location.href='/'"><-- Назад</button>
 </body>
 </html>
