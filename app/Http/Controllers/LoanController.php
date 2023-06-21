@@ -47,32 +47,41 @@ class LoanController extends Controller
             'amountMoney' => 'integer',
             'id' => 'integer',
         ]);
+
         $token = $request->session()->get('_token');
         foreach(users::where('remember_token', '=', $token)->get() as $user){
             $id = $user->id;
         }
         
         if(isset($id)){
+
             foreach($this->getAllAccounts() as $account){
+
                 if($account->user_id == $id){
-                    $account->cash -= $data['amountMoney'];
-                    $account->save();
+
+                    // account logic
+                    if($account->cash > $data['amountMoney']){
+                        $account->cash -= $data['amountMoney'];
+                        $account->save();
+                    }
+
+                    // loans logic
+                    foreach($this->getAllLoans() as $loan){
+                        if($loan->id == $data['id']){
+                            $loan->sum -= $data['amountMoney'];
+                            if($loan->sum > 0){
+                            $loan->save();
+                            }
+                            else{
+                                $loan->delete();
+                            }
+                        }
+                    }   
                 }
             }
-            foreach($this->getAllLoans() as $loan){
-                if($loan->id == $data['id']){
-                    $loan->sum -= $data['amountMoney'];
-                    if($loan->sum > 0){
-                    $loan->save();
-                    }
-                    else{
-                        $loan->delete();
-                    }
-                }
-            }
+
             return redirect('/main');
         }
-
     }
 }
 

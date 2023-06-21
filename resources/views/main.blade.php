@@ -21,9 +21,13 @@
 
                 <div class="title">
                     <h2>Займы</h2>  
-                    @if(count($loanList)<= 2)
+                    @if (isset($loanList))
+                        @if(count($loanList)<= 2)
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>
+                        
+                        @endif       
+                    @else
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/add-loan'">+</button>
-                    
                     @endif
 
                     @if($loanList)

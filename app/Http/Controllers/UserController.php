@@ -52,7 +52,7 @@ class UserController extends Controller
         }
     }
 
-
+    // Transition on close-loan page
     public function transfer(Request $request){
         $token = $request->session()->get('_token');
         foreach(users::where('remember_token', '=', $token)->get() as $users){
@@ -103,20 +103,31 @@ class UserController extends Controller
         if($data['password'] === $data['passwordRepeat']){
             $data['password'] = md5($data['password']);
             foreach($this->getAllUsers() as $user){
+                // check repeated data
                 if($user->email === $data['email'] or $data['phoneNumber'] === $user->phoneNumber){
                     $isExise = false;
                     $request->session()->forget('message');
                 }     
             }
 
+            
             // register users
             if($isExise){
-
+                // create user
                 $data['remember_token'] = hash('sha256', Str::random(80));
-
                 users::create($data);
-                return redirect()->route('users.index');
 
+                // creaete users account
+                foreach(users::where('remember_token', '=',  $data['remember_token'])->get() as $user){
+                    $id = $user->id;
+                }
+                $dataAccount = [
+                    'cash' => 0,
+                    'user_id' => $id,
+                ];
+                account::create($dataAccount);
+
+                return redirect()->route('users.index');
             }
             else{
                 return redirect()->route('regist.index'); 
@@ -127,7 +138,7 @@ class UserController extends Controller
 
     // test function 
     public function test(Request $request){
-        session('_token', '8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');
+        $request->session()->put('_token', hash('sha256', Str::random(80)));
         $value = $request->session()->get('_token');
         print_r($value . '<br>');        
         print_r('8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');
