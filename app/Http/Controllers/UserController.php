@@ -1,76 +1,71 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Controllers\LoanController;
 use App\Models\account;
-use App\Models\loan;
+// use App\Models\loan;
 use App\Models\users;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-
     public function getAllUsers(){
         return users::all();
-    } 
+    }
+
+
+
+    public function getUser($request){
+        return users::where('remember_token', $request->session()->token())->first();
+    }
+
 
 
     // Show main list and get data for it
-    public function showMain(Request $request)
+    public function showUserInfo(Request $request)
     { 
-        $request->session()->forget('message');
-        $token = $request->session()->get('_token');
-
-        foreach(users::where('remember_token', '=', $token)->get() as $users){
-            $user = $users;
-        }
-
+        $user = $this->getUser($request);
+        
         if(isset($user)){
+            $data = ['user' => ['name' => $user->name, 'lastname' => $user->lastname]];
             // get Account
-            if(count(account::where('user_id', $user->id)->get()) != 0){
-                foreach(account::where('user_id', $user->id)->get() as $data){
-                        $account = $data;
-                    }
-                }
+            $account = $user->account;            
+            if($account){      
+                $data['cash'] =  $account->cash;
+            }
             else{
                 $account = null;
             }
+            
             // get Loans 
-                $loans = loan::where('user_id', $user->id)->get(); 
-                if(count($loans) == 0){
-                    $loans = null;
-                } 
-                return view('main', ['user' => $user, 'account' => $account, 'loanList' => $loans]);
+            $loans = $user->loans; 
+
+            
+            if($loans ){
+                $data['loans'] = $loans;
+            } 
+            
+            else{
+                $data['loans'] = null;
+            }
+            return response()->json($data);
             }
         else {
-            return view('error', ['message' => 'Эта страница вам недоступна сударь! Выйдите от сюда, пожалуйста!']);
+            return response()->json(['error' => "User id not defind", 'code' => 500]);
         }
     }
 
     
-    // Transition on close-loan page
-    public function transfer(Request $request){
-        // get users
-        $token = $request->session()->get('_token');
-        foreach(users::where('remember_token', '=', $token)->get() as $users){
-            $user = $users;
-        }
-        // get account
-        if(count(account::where('user_id', $user->id)->get()) != 0){
-            foreach(account::where('user_id', $user->id)->get() as $data){
-                    $account = $data;
-                }
-            }
-        else{
-            $account = null;
-        }
-        // get loans
-        $loans = loan::where('user_id', $user->id)->get();
 
-        return view('close-loan', ['loansList' => $loans, 'account' => $account]);
-    }   
+    
+
+
+
+
+
+
+
 
 
     // Entrance user 
@@ -80,18 +75,25 @@ class UserController extends Controller
             'password' => 'string',
         ]);
 
-        // check for enter in system
-        $request->session()->forget('message');
-        foreach($this->getAllUsers() as $user){
-            if($user->email == $data['email'] and $user->password === md5($data['password'])) {
-                $request->session()->put('_token', $user->remember_token);
-                return redirect()->route('mainList.show');
-            }   
-        }
 
-        $request->session()->put('message', 'Неверный логин или пароль');
-        return redirect()->route('users.index');
+        // check for enter in system
+        foreach($this->getAllUsers() as $user){
+            if($user->email == $data['email'] and $user->password === md5($data['password'])){
+                $request->session()->put('_token', $user->remember_token);
+                return response()->json(); 
+            }   
+
+        }
+        return response()->json(['message' => 'Не правильный логин или пароль']);
+        
     }
+
+
+
+
+
+
+
 
 
     // register user
@@ -103,19 +105,15 @@ class UserController extends Controller
             'phoneNumber' => 'string',
             'email' => 'string',
             'password' => 'string',
-            'passwordRepeat' => 'string',            
         ]);
 
-        $request->session()->forget('message');
 
         // check right data
-        if($data['password'] === $data['passwordRepeat']){
-            $data['password'] = md5($data['password']);
+        
             foreach($this->getAllUsers() as $user){
                 // check repeated data
-                if($user->email === $data['email'] or $data['phoneNumber'] === $user->phoneNumber){
+                if($user->email === $data['email'] || $user->phoneNumber === $data['phoneNumber'] ){
                     $isExise = false;
-                    $request->session()->forget('message');
                 }     
             }
 
@@ -123,6 +121,7 @@ class UserController extends Controller
             // register users
             if($isExise){
                 // create user
+                $data['password'] = md5($data['password']);
                 $data['remember_token'] = hash('sha256', Str::random(80));
                 users::create($data);
 
@@ -132,25 +131,30 @@ class UserController extends Controller
                 }
                 $dataAccount = [
                     'cash' => 0,
-                    'user_id' => $id,
+                    'users_id' => $id,
                 ];
 
                 account::create($dataAccount);
 
-                return redirect()->route('users.index');
+                return response()->json();
             }
             else{
-                return redirect()->route('regist.index'); 
+                return response()->json(['message' => 'Этот пользователь уже зарегестрирован']); 
             }
-        }
+        
     }
 
 
     // test function 
     public function test(Request $request){
-        $request->session()->put('_token', hash('sha256', Str::random(80)));
-        $value = $request->session()->get('_token');
-        print_r($value . '<br>');        
-        print_r('8eQjXjNuwYNQjYsDJlRkUD30k72oIcOuGszYL3vp');
+        // $value = $request->session()->get('_token');
+        // print_r($value . '<br>');        
+        // print_r($request->session());
+        // print_r(csrf_token());
+        $data = ['token' => csrf_token()];
+        // dd($data);
+        return response()->json($data);
+        // return view('enter');
     }
+
 }

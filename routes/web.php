@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,30 +18,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// register
+Route::get('/sign-up', [Controller::class, 'showPage']);
+Route::post('/sign-up', [UserController::class, 'registUser'])->name('regist.check');
+
+
 
 // authorithation
-Route::get('/', function(){return view('enter');})->name('users.index');
-Route::post('/input', [UserController::class, 'checkUser'])->name('input.check');
+Route::get('/', [Controller::class, 'showPage']);
+Route::post('/login', [UserController::class, 'checkUser'])->name('input.check');
 
-// regitration
-Route::get('/regist', function(){return view('regist');})->name('regist.index');
-Route::post('/regist', [UserController::class, 'registUser'])->name('regist.check');
+
 
 // main page
-Route::get('/main', [UserController::class, 'showMain'])->name('mainList.show');
+Route::get('/main', [Controller::class, 'showPage']);
+Route::post('/getUserInfo', [UserController::class, 'showUserInfo']);
+
 
 // transfer money
-Route::get('/transfer', function(){return view('transfer-money');})->name('transfer.index');
-Route::post('/transfer', [AccountController::class, 'transferMoney'])->name('transfer.check');
-
+Route::get('/transfer-money', [Controller::class, 'showPage']);
+Route::put('/transfer-money', [AccountController::class, 'transferMoney'])->name('transfer.check');
 
 // cretae loan
-Route::get('/add-loan', function(){return view('add-loan');})->name('add-loan.index');
+Route::get('/add-loan', [Controller::class, 'showPage']);
 Route::post('/add-loan', [LoanController::class, 'createLoan'])->name('add-loan.check');
 
 // close loan
-Route::get('/close-loan',[UserController::class, 'transfer'])->name('close-loan.index');
-Route::post('/close-loan', [LoanController::class, 'closeLoan'])->name('close-loan.check');
+Route::get('/close-loan', [Controller::class, 'showPage']);
+Route::put('/close-loan', [LoanController::class, 'closeLoan'])->name('close-loan.check');
+
+
+
 
 
 // page for testing
@@ -48,5 +57,3 @@ Route::get('/tes', function(){return view('add-account');});
 
 
 
-// Route::get('/add-account', function(){return view('add-account');})->name('add-account.index');
-// Route::post('/add-account', [AccountController::class, 'add-account'])->name('add-account.check');

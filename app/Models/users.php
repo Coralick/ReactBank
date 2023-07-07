@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\account;
+use App\Models\loan;
 use Illuminate\Database\Eloquent\Model;
+
 
 class users extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'lastname',
         'email',
@@ -29,7 +31,7 @@ class users extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'password'
+        // 'password'
     ];
 
     /**
@@ -38,7 +40,12 @@ class users extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        // 
     ];
+    public function loans(){
+        return $this->hasMany(loan::class);
+    }
+    public function account(){
+        return $this->hasOne(account::class);
+    }
 }
-

@@ -1,23 +1,24 @@
-<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <title>Laravel</title>
-         {{-- get csrf token --}}
-         <meta name="csrf-token" content="{{ csrf_token() }}">
-        @viteReactRefresh
-        @vite(['resources/js/react-bank/src/index.jsx'])
+        
+        {{-- get csrf token --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        
         {{-- Bootstrap --}}
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-        
-        {{-- Style --}}
-        <link rel="stylesheet" href="/css/app.css">
+
+        {{-- vite --}}
+        @viteReactRefresh
+        @vite(['resources/js/react-bank/src/index.jsx', 'resources/css/app.css'])
+
     </head>
     <body>
-        <div id="root">
 
+        <div id="root">
         </div>
     </body>
 </html>

@@ -8,36 +8,21 @@ use Illuminate\Http\Request;
 
 class LoanController extends Controller
 {
-    public function getAllUsers(){
-        return users::all();
-    } 
-
-    public function getAllAccounts(){
-        return account::all();
-    } 
-
-    public function getAllLoans(){
-        return loan::all();
-    } 
-
 
     public function createLoan(Request $request){
         $data = request()->validate([
-            'period' => 'int',
             'sum' => 'string',
         ]);
 
         // create loan logic
         if($data['sum'] >= 1000 and $data['sum'] <= 150000){
-            foreach(users::where('remember_token', '=', $request->session()->get('_token'))->get() as $user){
-                $data['user_id'] = $user->id;
-                var_dump($data);
-                loan::create($data);
-            }
-            return redirect('/main');
+            $user = users::where('remember_token', $request->session()->token())->first();
+            $data['users_id'] = $user->id;   
+            loan::create($data);
+            return response()->json();
         }
         else{
-            return view('add-loan', ['message' => 'Вы ввели недопустимую сумму']);
+            return response()->json(['message' => 'Вы ввели недопустимую сумму']);
         }
     }
 
@@ -47,50 +32,40 @@ class LoanController extends Controller
             'amountMoney' => 'integer',
             'id' => 'integer',
         ]);
+    // return response()->json($data);
 
-        $token = $request->session()->get('_token');
-        foreach(users::where('remember_token', '=', $token)->get() as $user){
-            $id = $user->id;
-        }
+        $loan = loan::find($data['id']);
+        $user =  $user = users::where('id',$loan->users_id)->first();
         
-        $request->session()->forget('message');
-        if(isset($id)){
-
-            foreach($this->getAllAccounts() as $account){
-
-                if($account->user_id == $id){
-
-                    // account logic
-                    if($account->cash > $data['amountMoney']){
-                        $account->cash -= $data['amountMoney'];
-                        $account->save();
-                    }
-                    else{
-                        $request->session()->put('message', 'У вас не достаточно средств');
-                        return redirect('/close-loan');
-                    }
-                    // loans logic
-                    foreach($this->getAllLoans() as $loan){
-                        if($loan->id == $data['id']){
-                            $loan->sum -= $data['amountMoney'];
-
-                            // check repayment loan
-                            if($loan->sum > 0){
-                                $loan->save();
-                            }
-
-                            else{
-                                $loan->delete();
-                            }
-                        }
-                    }   
+        if(isset($user)){
+            
+            $account = $user->account;
+        // money transfer
+            if($account->cash > $data['amountMoney']){
+                if($loan->sum - $data['amountMoney'] >= 0){
+                    $account->cash -= $data['amountMoney'];
+                    $loan->sum -= $data['amountMoney'];
+                    $account->save();
+                }
+                else{
+                    return response()->json(['message' => 'Вы ввели слишком большую сумму']);
                 }
             }
-            $request->session()->forget('message');
-            return redirect('/main');
+            else{
+                return response()->json(['message' => 'У вас не достаточно средств']);
+            }
+        // check repayment loan
+            if($loan->sum > 0){
+                $loan->save();
+            }
+            else{
+                $loan->delete();
+            }
+            return response()->json();
+        
         }
         else{
-            return view('error', ['message' => 'Ты как сюда попал ?']);
+            return response()->json(['message' => 'Возникли технические шакаладки, обратитесь к администратору']);
         }
     }
 }

@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('loans', function(Blueprint $table){
             $table -> id('id');
-            $table -> integer('period')->nullable();
-            $table -> integer('sum')->nullable();
-            $table -> unsignedBigInteger('user_id');
-            $table -> index('user_id', 'user_loans_idx');
-            $table -> foreign('user_id', 'user_loans_fk')->on('users')->references('id');
+            $table -> float('sum', 20, 2)->nullable();
+            $table -> unsignedBigInteger('users_id');
+            $table -> index('users_id', 'users_loans_idx');
+            $table -> foreign('users_id', 'users_loans_fk')->on('users')->references('id');
             $table -> timestamps();
             $table -> softDeletes();
         });

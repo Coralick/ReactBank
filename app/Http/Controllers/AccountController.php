@@ -23,35 +23,45 @@ class AccountController extends Controller
         ]);
         
         // get current user
-        $absenders = users::where('remember_token', '=', $request->session()->get('_token'))->get();
+        $sender = users::where('remember_token', $request->session()->token())->first();
+        $recipient = users::where('phoneNumber', $data['transferNumber'])->first();
         // logic transfer money 
-        foreach($absenders as $absender){
-            if($absender->phoneNumber != $data['transferNumber'])
-            
-                // account change cash
-                foreach(users::where('phoneNumber', '=', $data['transferNumber'])->get() as $user){
-                    // add money
-                    foreach(account::where('user_id', '=', $user->id)->get() as $account){
-                        if($account->cash >= $data['amountMoney']){
-                            $account->cash += $data['amountMoney'];
-                            $account->save();
-                        }
-                        else{
-                            return view('transfer-money', ['message' => 'У вас недостаточно средств']);
-                        }
-                    }
+            if($sender->phoneNumber != $data['transferNumber']){
 
-                    // select money
-                    foreach(account::where('user_id', '=', $absender->id)->get() as $account){
-                        $account->cash -= $data['amountMoney'];
-                        $account->save();
+                // check isset recipient 
+                if($recipient){
+
+                    $senderAccount = $sender->account;
+                    $recipientAccount = $recipient->account;
+
+                    if($recipientAccount){
+                        
+                        // account change cash
+                    
+                        // add money
+                            if($senderAccount->cash >= $data['amountMoney']){
+                                $recipientAccount->cash += $data['amountMoney'];
+                                $recipientAccount->save();
+                                // select money
+                                $senderAccount->cash -= $data['amountMoney'];
+                                $senderAccount->save();
+                            }
+                            else{
+                                return response()->json(['message' => 'У вас не достаточно средств']);
+                            }
+                        }
+
+                    else{
+                        return response()->json(['message' => 'Такого счета не существует']);
                     }
                 }
+                else{
+                    return response()->json(['message' => 'Такого пользователя не существует']);
+                }
+            }
+                    
             else{
-                return view('transfer-money', ['message' => 'Это ваш Номер']);
+                return response()->json(['message' => 'Вы не можете перевести сами себе']);
             }
         }
-        return redirect('/main');
     }
-
-}

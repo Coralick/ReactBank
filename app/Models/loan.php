@@ -11,7 +11,9 @@ class loan extends Model
     protected $fillable = [
         'id',
         'sum',
-        'period',
-        'user_id',
+        'users_id',
     ];
+    public function user(){
+        return $this->belongsTo(users::class);
+    }
 }

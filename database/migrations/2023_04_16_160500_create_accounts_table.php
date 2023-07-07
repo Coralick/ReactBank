@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('accounts', function(Blueprint $table){
             $table -> id('id');
-            $table -> integer('cash')->nullable();
-            $table -> unsignedBigInteger('user_id');
-            $table -> index('user_id', 'user_account_idx');
-            $table -> foreign('user_id', 'user_account_fk')->on('users')->references('id');
+            $table -> float('cash', 20, 2)->nullable();
+            $table -> unsignedBigInteger('users_id');
+            $table -> index('users_id', 'user_account_idx');
+            $table -> foreign('users_id', 'user_account_fk')->on('users')->references('id');
             $table -> timestamps();
             $table -> softDeletes();
         });
