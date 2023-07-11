@@ -3,7 +3,10 @@ import axios from 'axios';
 
 function TransferMoney() {
     let data = {}
-
+    const phonePattern = /^((8|\+7)[- ]?)?((\d{3})?[- ]?)?[\d- ]{7,10}$/
+    const [money, setMoney] = useState(true)
+    const [phone, setPhone] = useState(true)
+    const [message, setMessage] = useState(null)
     const [account,setAccount] = useState(String)
     
     useEffect(()=>{
@@ -18,8 +21,6 @@ function TransferMoney() {
     })
 
 
-    const [message, setMessage] = useState(null)
-
     useEffect(()=>{
         let formData = document.querySelectorAll('input')
         formData.forEach(input => {
@@ -28,11 +29,30 @@ function TransferMoney() {
         console.log(data)
     }, [data])
 
+    
+    const phoneIsValid = e =>{
+        if(!phonePattern.test(e.target.value) && e.target.value != ''){
+            setPhone(false)
+        }
+        else{
+            setPhone(true)
+            data[e.target.name] = e.target.value
+            sessionStorage.setItem(name, e.target.value)
+        }
+    }
+
     const handleChange = e =>{
         let name = e.target.name
-        data[name] = e.target.value
-        sessionStorage.setItem(name, e.target.value)
+        if(!/^\d+$/.test(e.target.value) && e.target.value != ''){
+            setMoney(false)
+        }
+        else{
+            setMoney(true)
+            data[name] = e.target.value
+            sessionStorage.setItem(name, e.target.value)
+        }
     }
+
     const Enter = e =>{
         e.preventDefault()
         axios.put('/transfer-money', data)
@@ -58,8 +78,12 @@ function TransferMoney() {
                 <h1>Перевод</h1>
                 <h1 className='bg-secondary info'>Счет: {account} руб</h1>
 
-                <input required type="text" placeholder="номер телефона" name="transferNumber" onSubmit={handleChange} onChange={handleChange}/>
-                <input required type="text" placeholder="денежная сумма" name="amountMoney" onChange={handleChange}/>
+                <input required type="text" placeholder="номер телефона" className={!phone && 'text-danger'} name="transferNumber" onChange={phoneIsValid}/>
+                {!phone && <p className='text-danger'>Не правильный номер телефона</p>}
+
+                <input required type="text" placeholder="денежная сумма"  className={!money && 'text-danger'} name="amountMoney" onChange={handleChange}/>
+                {!money && <h4 className='text-danger'>Не правильно указанна сумма</h4>}
+
                 {message && <h4 class="text-danger">{message}</h4>}
                 
 

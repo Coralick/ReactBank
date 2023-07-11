@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 function SignIn() {
     const [message, setMessage] = useState(null)
 
+
     let data = {}
 
     useEffect(()=>{
@@ -13,11 +14,13 @@ function SignIn() {
         });
         console.log(data)
     }, [data])
+    let pattern = /^((8|\+7)[- ]?)?((\d{3})?[- ]?)?[\d- ]{7,10}$/;
 
     const handleChange = e =>{
         let name = e.target.name
         data[name] = e.target.value
         sessionStorage.setItem(name, e.target.value)
+        
     }
 
     const  http = axios.create({

@@ -5,7 +5,7 @@ FROM php:7.4-apache
 RUN docker-php-ext-install pdo pdo_mysql
 
 # Установка Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php 
 
 # Установка Node.js и NPM
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -

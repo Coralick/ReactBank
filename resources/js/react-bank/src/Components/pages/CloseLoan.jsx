@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 function CloseLoan() {
 
     const [message, setMessage] = useState(null)
-
+    const [money, setMoney] = useState(true)
     const [account, setAccount] = useState(String)
     const [loans, setLoans] = useState([])
 
@@ -36,8 +36,14 @@ function CloseLoan() {
 
     const handleChange = e =>{
         let name = e.target.name
+        if(!/^\d+$/.test(e.target.value) && e.target.value != ''){
+            setMoney(false)
+        }
+        else{
+            setMoney(true)
             data[name] = e.target.value
-        sessionStorage.setItem(name, e.target.value)
+            sessionStorage.setItem(name, e.target.value)
+        }
     }
 
 
@@ -65,18 +71,20 @@ function CloseLoan() {
         <form onSubmit={createLoan} className="formStyle">
             <h1>Погашение</h1>
             <h2 className="bg-secondary text-light">Ваш счет: {account}</h2>
-            <input required type="text" placeholder="денежная сумма" name="amountMoney" className='input' onChange={handleChange}/>
+
+            <input required type="text" placeholder="денежная сумма" name="amountMoney" className={!money ? 'text-danger input': 'input'} onChange={handleChange}/>
+            {!money && <h4 className='text-danger'>Не правильно указанна сумма</h4>}
+
             <select name="id" className='input' onChange={handleChange}>
             <option disabled selected value={0}>Выберите займ</option>
                 {loans && loans.map(({id, sum})=>{
                     return <option name="id" value={id} key={id}>{id + ")"} {sum}</option>
                 })}
             </select>
-                {/* correction text */}
-                {message && <h4 class="text-danger">{message}</h4>}
+
             <div>
                 <button type="button" className="btn btn-outline-danger" value='main' onClick={redirectTo}>Назад</button>
-                <button type="submit" className="btn btn-outline-primary">Перевести</button>
+                <button type="submit" disabled={!money} className="btn btn-outline-primary">Перевести</button>
             </div>
         </form>
     );
