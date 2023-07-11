@@ -3,23 +3,31 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 function SignIn() {
     const [message, setMessage] = useState(null)
+
     let data = {}
+
+    useEffect(()=>{
+        let formData = document.querySelectorAll('input')
+        formData.forEach(input => {
+            data[input.name] = sessionStorage.getItem(input.name)
+        });
+        console.log(data)
+    }, [data])
 
     const handleChange = e =>{
         let name = e.target.name
         data[name] = e.target.value
-        console.log(data)
+        sessionStorage.setItem(name, e.target.value)
     }
-        const  http = axios.create({
-            baseURL: 'http://originproject.test/',
-            withCredentials: true,
-            headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'content-type': 'application/json',
-            },
-            
-        })
 
+    const  http = axios.create({
+        baseURL: 'http://origin-project.test/',
+        withCredentials: true,
+        headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'content-type': 'application/json',
+        },
+    })
 
     const Enter = (event) => {
         event.preventDefault()
@@ -27,31 +35,34 @@ function SignIn() {
             .then(() => {
                 http.post('/login', data)
                 .then(data => {
-                    !data.data.message? 
-                    window.location.href = '/main'
-                    :
-                    setMessage(data.data.message)
+                    if(!data.data.message){
+                        sessionStorage.clear()
+                        window.location.href = '/main' 
+                    }
+
+                    else{
+                        setMessage(data.data.message)
+                    }
                 })
-            })
+                })
             .catch((er) => {
                 console.log(er)
             }) 
     }
-    
 
     return(
         <div className="block">
-            <form onSubmit={Enter}  className="formStyle">
+            <form  onSubmit={Enter}  className="formStyle">
                 
                 <h1>Вход</h1>
-                <input required type="email" placeholder="Email" name="email" onChange={handleChange}/>
+                <input required type="email" placeholder="Email"  name="email" onChange={handleChange}/>
                 <input required type="password" placeholder="Password" name="password" onChange={handleChange}/>
-                <button type="submit" className="btn btn-outline-primary">Вход</button>
+                <button type="submit" className="btn btn-outline-secondary">Вход</button>
                 
                 {/* correction text */}
                 {message && <p className='bg-danger info'>{message}</p>}
 
-                <Link to='/sign-up'>Вы не зарегестрированны?</Link>
+                <Link to='/sign-up' className='text-success'>Вы не зарегестрированны?</Link>
             </form>
         </div>
     )

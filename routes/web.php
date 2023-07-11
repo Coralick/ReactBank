@@ -23,11 +23,9 @@ Route::get('/sign-up', [Controller::class, 'showPage']);
 Route::post('/sign-up', [UserController::class, 'registUser'])->name('regist.check');
 
 
-
 // authorithation
-Route::get('/', [Controller::class, 'showPage']);
-Route::post('/login', [UserController::class, 'checkUser'])->name('input.check');
-
+Route::get('/', [Controller::class, 'showPage'])->name('login.index');
+Route::post('/login', [UserController::class, 'checkUser'])->name('login.check');
 
 
 // main page
@@ -48,12 +46,19 @@ Route::get('/close-loan', [Controller::class, 'showPage']);
 Route::put('/close-loan', [LoanController::class, 'closeLoan'])->name('close-loan.check');
 
 
-
+// logout
+Route::post('/log-out', [Controller::class, 'logOut']);
 
 
 // page for testing
 Route::get('/test', [UserController::class, 'test']);
-Route::get('/tes', function(){return view('add-account');});
+Route::get('/tes', function(Request $request){
+
+    if(isset($request)){
+        return response()->json(['session' => $request]);
+    }
+    return response()->json('Тут нихуя нет ');
+});
 
 
 

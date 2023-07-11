@@ -17,7 +17,10 @@ class LoanController extends Controller
         // create loan logic
         if($data['sum'] >= 1000 and $data['sum'] <= 150000){
             $user = users::where('remember_token', $request->session()->token())->first();
-            $data['users_id'] = $user->id;   
+            $data['users_id'] = $user->id; 
+            $account = $user->account;
+            $account->cash += $data['sum'];
+            $account->save();
             loan::create($data);
             return response()->json();
         }
@@ -29,7 +32,7 @@ class LoanController extends Controller
 
     public function closeLoan(Request $request){
         $data = request()->validate([
-            'amountMoney' => 'integer',
+            'amountMoney' => 'string',
             'id' => 'integer',
         ]);
     // return response()->json($data);

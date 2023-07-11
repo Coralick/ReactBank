@@ -7,22 +7,33 @@ function AddLoan() {
 
     let data = {}
 
+    useEffect(()=>{
+        let formData = document.querySelectorAll('input')
+        formData.forEach(input => {
+            data[input.name] = sessionStorage.getItem(input.name)
+        });
+        console.log(data)
+    }, [data])
+
     const handleChange = e =>{
         let name = e.target.name
         data[name] = e.target.value
-        console.log(data)
+        sessionStorage.setItem(name, e.target.value)
     }
 
     const createLoan = e =>{
         e.preventDefault()
         console.log(data)
         axios.post('/add-loan', data)
-        .then(res =>{
-            console.log(res)
-            !res.data.message? 
-            window.location.href = '/main'
-            :
-            setMessage(res.data.message)
+        .then(data =>{
+            if(!data.data.message){
+                sessionStorage.clear()
+                window.location.href = '/main' 
+            }
+
+            else{
+                setMessage(data.data.message)
+            }
         })
     }
 
@@ -35,7 +46,7 @@ function AddLoan() {
                     <h1>Взять займ</h1>
 
                  {/* main input */}
-                <input required type="number" placeholder="сумма(от 1000 до 150 000)" onChange={handleChange} name="sum"/>
+                <input required type="text" placeholder="сумма(от 1000 до 150 000)" onChange={handleChange} name="sum"/>
 
                 {/* correction text */}
                 {message && <h4 class="text-danger">{message}</h4>}

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\account;
-// use App\Models\loan;
 use App\Models\users;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -13,8 +11,6 @@ class UserController extends Controller
     public function getAllUsers(){
         return users::all();
     }
-
-
 
     public function getUser($request){
         return users::where('remember_token', $request->session()->token())->first();
@@ -52,7 +48,7 @@ class UserController extends Controller
             return response()->json($data);
             }
         else {
-            return response()->json(['error' => "User id not defind", 'code' => 500]);
+            return response()->json(['error' => "User id not defind"]);
         }
     }
 
@@ -82,7 +78,6 @@ class UserController extends Controller
                 $request->session()->put('_token', $user->remember_token);
                 return response()->json(); 
             }   
-
         }
         return response()->json(['message' => 'Не правильный логин или пароль']);
         
@@ -153,7 +148,7 @@ class UserController extends Controller
         // print_r(csrf_token());
         $data = ['token' => csrf_token()];
         // dd($data);
-        return response()->json($data);
+        return print_r( $request->session()->previousUrl());
         // return view('enter');
     }
 
